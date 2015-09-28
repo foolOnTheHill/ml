@@ -42,23 +42,9 @@ def _extendedDissimilarity(D, Gk, e):
         tmp.append(D[e][g])
     return sum(tmp)
 
-def fuzzyClustering(E, D, K, T, m, q, epsilon):
-    """ Partitioning Fuzzy K-Medoids Clustering Algorithm Based on a Single Dissimilarity Matrix. (Section 2.1)
-        - E: Set/List of elements;
-        - D: Dissimilarity matrix;
-        - K: Number of clusters;
-        - T: Maximum number of iterations;
-        - m: parameter of fuzziness of membership of elements;
-        - q: cardinality of the prototypes;
-        - epsilon: threshold for the goal function. """
-
-    n = len(E)
-    G = _selectRandomPrototypes(K, n, q) # Initial prototypes
-    U = [] # Membership degree Matrix
-    J = 0 # Homogeneity / Goal function
-    t = 0 # Current Iteration step
-
-    # Initialization
+def _updateMembershipDegree(D, G, K, n, m):
+    """ Updates the membership degree based on the new prototypes. """
+    U = []
     exp = 1.0 / (m-1)
     for i in range(n):
         U_i = []
@@ -71,12 +57,33 @@ def fuzzyClustering(E, D, K, T, m, q, epsilon):
             u_i_k = sum(tmp) ** -1
             U_i.append(u_i_k)
         U.append(U_i)
+    return U
 
+def _goalFunction(D, G, U, K, n):
+    """ Computes the goal function based on the new membership degree matrix and the new prototypes. """
+    J = 0
     for k in range(K):
         for i in range(n):
             u = U[i][k] ** m
             d = _extendedDissimilarity(D, G[k], i)
             J += u * d
+    return J
+
+def fuzzyClustering(E, D, K, T, m, q, epsilon):
+    """ Partitioning Fuzzy K-Medoids Clustering Algorithm Based on a Single Dissimilarity Matrix. (Section 2.1)
+        - E: Set/List of elements;
+        - D: Dissimilarity matrix;
+        - K: Number of clusters;
+        - T: Maximum number of iterations;
+        - m: parameter of fuzziness of membership of elements;
+        - q: cardinality of the prototypes;
+        - epsilon: threshold for the goal function. """
+
+    n = len(E)
+    G = _selectRandomPrototypes(K, n, q) # Initial prototypes
+    U = _updateMembershipDegree(D, G, K, n, m) # Membership degree Matrix
+    J = _goalFunction(D, G, U, K, n) # Homogeneity / Goal function
+    t = 0 # Current Iteration step
 
     while t < T:
         t += 1
