@@ -10,7 +10,6 @@ def _readData(filename):
 
 def _computeDissimilarityMatrix(data):
     """ Computes the Dissimilarity Matrix. The data should be pre-proccessed. """
-
     # Dissimmilarity function
     delta = lambda (x_ik, x_jk) : 0 if (x_ik == x_jk) else 1
     d = lambda x_i, x_j : sum(map(delta, zip(x_i, x_j)))
