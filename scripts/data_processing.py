@@ -1,5 +1,5 @@
 
-def _readData(filename):
+def readData(filename):
     """ Returns a matrix with the data from the file. """
     f = open(filename, 'r')
     lines = f.readlines()
@@ -8,7 +8,7 @@ def _readData(filename):
     data = map(mp, lines)
     return data
 
-def _computeDissimilarityMatrix(data):
+def computeDissimilarityMatrix(data):
     """ Computes the Dissimilarity Matrix. The data should be pre-proccessed. """
     # Dissimmilarity function
     delta = lambda (x_ik, x_jk) : 0 if (x_ik == x_jk) else 1
@@ -26,5 +26,5 @@ def _computeDissimilarityMatrix(data):
     return matrix
 
 def proccessData(filename):
-    data = _readData(filename)
-    return _computeDissimilarityMatrix(data)
+    data = readData(filename)
+    return computeDissimilarityMatrix(data)
