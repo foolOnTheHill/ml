@@ -21,9 +21,9 @@ def computeDissimilarityMatrix(data):
 
     matrix = []
     for i in range(n):
-    matrix.append([])
-    for j in range(n):
-      matrix[i].append(d(data[i], data[j]))
+        matrix.append([])
+        for j in range(n):
+          matrix[i].append(d(data[i], data[j]))
 
     return matrix
 
