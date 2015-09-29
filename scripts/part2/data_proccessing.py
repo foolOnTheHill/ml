@@ -12,6 +12,16 @@ def readData(filename):
     Y = map(getY, data)
     return (X, Y)
 
+def getClasses(Y):
+    """ Divides the data set according to elements classes. """
+    C = [[], []]
+    for i in range(len(Y)):
+        if Y[i] == 1:
+            C[0].append(i)
+        else:
+            C[1].append(i)
+    return C
+
 def proccessData(filename):
     """ Maps the input data to the model defined at the documentation. """
     (X, Y) = readData(filename)
@@ -20,4 +30,5 @@ def proccessData(filename):
     X = map(proccessX, X)
     proccessY = lambda y : 1 if y == 'positive' else 2
     Y = map(proccessY, Y)
-    return (X, Y)
+    C = getClasses(Y)
+    return (X, Y, C)
