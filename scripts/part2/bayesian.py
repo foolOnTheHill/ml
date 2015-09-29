@@ -24,13 +24,13 @@ def estimateProbabilities(X, Y, C):
             nj = len(C[j])
             for k in elements:
                 # p_i_j
-                r = x[k][i]*(x[k][i] + 1)*0.5
+                r = X[k][i]*(X[k][i] + 1)*0.5
                 p_tmp.append(r)
                 # q_i_j
-                r = 1 - x[k][i]*x[k][i]
+                r = 1 - X[k][i]*X[k][i]
                 q_tmp.append(r)
                 # r_i_j
-                r = x[k][i]*(x[k][i] - 1)*0.5
+                r = X[k][i]*(X[k][i] - 1)*0.5
                 r_tmp.append(r)
             p_i.append(sum(p_tmp) / float(nj))
             q_i.append(sum(q_tmp) / float(nj))
