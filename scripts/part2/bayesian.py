@@ -65,4 +65,18 @@ def bayes(j, x, p, q, r):
     return bt
 
 def bayesianClassifier(X, Y, C):
-    pass
+    """ Classifies the data using the estimated probabilities and Bayes Theorem. """
+    E = [] # Classification computed by the algorithm
+    (p, q, r) = estimateProbabilities(X, Y, C)
+    n = len(X)
+    c = 2 # Number of classes
+    for i in range(n):
+        y = None
+        est = None
+        for j in range(c):
+            tmp = bayes(j, X[i], p, q, r)
+            if (est == None) or (tmp > est):
+                est = tmp
+                y = j
+        E.append(y)
+    return E
