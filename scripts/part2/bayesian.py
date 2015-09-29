@@ -77,6 +77,6 @@ def bayesianClassifier(X, Y, C):
             tmp = bayes(j, X[i], p, q, r)
             if (est == None) or (tmp > est):
                 est = tmp
-                y = j
+                y = j+1
         E.append(y)
     return E
