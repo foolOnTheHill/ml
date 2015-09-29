@@ -8,7 +8,7 @@ def readData(filename):
     data = map(mp, lines)
     getX = lambda l : l[:len(l)-1]
     X = map(getX, data)
-    getY = lambda l : l[-1] # Gets the last element (the class parameter)
+    getY = lambda l : l[-1][:-1] # Gets the last element (the class parameter)
     Y = map(getY, data)
     return (X, Y)
 
