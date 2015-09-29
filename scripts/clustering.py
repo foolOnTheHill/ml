@@ -87,6 +87,16 @@ def fuzzyClustering(E, D, K, T, m, q, epsilon):
 
     while t < T:
         t += 1
-        # TODO:
-            # Step 1
-            # Step 2
+        # Step 1
+        for k in range(K):
+            G[k] = computePrototypes(U, D, m, n, q, k)
+        # Step 2
+        U = _updateMembershipDegree(D, G, K, n, m)
+        # Step 3
+        g = _goalFunction(D, G, U, K, n)
+        if abs(J - g) < epsilon :
+            break
+        else :
+            J = g
+
+    return (U, G, J)
