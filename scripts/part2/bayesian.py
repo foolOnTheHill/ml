@@ -4,7 +4,7 @@ def prod(lst):
     """ Returns the product of the elements on the list. """
     return reduce(mul, lst, 1)
 
-def estimateProbabilities(X, Y, C):
+def estimateProbabilities(X, C):
     """ Estimates the conditional probabilities using the approximation given at the documentation. """
     p = []
     q = []
@@ -64,10 +64,10 @@ def bayes(j, x, p, q, r):
     bt = num / denom
     return bt
 
-def bayesianClassifier(X, Y, C):
+def bayesianClassifier(X, C):
     """ Classifies the data using the estimated probabilities and Bayes Theorem. """
     E = [] # Classification computed by the algorithm
-    (p, q, r) = estimateProbabilities(X, Y, C)
+    (p, q, r) = estimateProbabilities(X, C)
     n = len(X)
     c = 2 # Number of classes
     for i in range(n):
