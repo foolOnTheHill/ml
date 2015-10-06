@@ -13,7 +13,7 @@ def estimatePosterior(X, Y, W, k):
         P.append([])
 
     for i in range(n):
-        # TODO: since d(-, -) is symmetrical, we can speed up and avoid re-doing some calculations while computing N.
+        # TODO: since d(-, -) is symmetrical, we can speed up and avoid re-doing some calculations to compute N.
         mp = lambda (k, x) : (k, d(X[i], x))
         ft = lambda (k, x) : not (k == i)
         N = map(mp, filter(ft, indexed)) # Neighbors
