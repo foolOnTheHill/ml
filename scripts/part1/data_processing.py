@@ -19,11 +19,12 @@ def computeDissimilarityMatrix(data):
     # Number of examples
     n = len(data)
 
-    matrix = []
+    matrix = [[0 for j in range(n)] for i in range(n)] # Matrix filled with 0s
+
     for i in range(n):
-        matrix.append([])
-        for j in range(n):
-          matrix[i].append(d(data[i], data[j]))
+        for j in range(i+1, n): # The dissimilarity matrix is symmetrical
+          matrix[i][j] = d(data[i], data[j])
+          matrix[j][i] = matrix[i][j]
 
     return matrix
 
