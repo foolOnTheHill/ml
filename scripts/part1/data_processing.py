@@ -22,7 +22,7 @@ def computeDissimilarityMatrix(data):
     matrix = [[0 for j in range(n)] for i in range(n)] # Matrix filled with 0s
 
     for i in range(n):
-        for j in range(i, n): # The dissimilarity matrix is symmetrical
+        for j in range(i+1, n): # The dissimilarity matrix is symmetrical
           matrix[i][j] = d(data[i], data[j])
           matrix[j][i] = matrix[i][j]
 
