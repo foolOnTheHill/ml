@@ -32,14 +32,15 @@ def train(X, Y, learning_rate, hidden_units, output_units, max_iterations):
             - output_units : number of output units (must be equal to the dimension of the elements on Y);
             - max_iterations : maximum number of iterations of the training algorithm.
     """
-    dim = len(X[0])
+    dim = len(X[0]) # inputs dimension
 
-    layers = 1 + len(hidden_units) + 1 # input + hidden + output
+    layers = 1 + len(hidden_units) + 1 # input layer + hidden layer + output layer
     units = [dim] + hidden_units + [output_units]
 
-    W = []
-    b = []
+    W = [] # Weights matrix
+    b = [] # Bias matrix
 
+    # Initializes W and b with random values
     for l in range( layers-1 ): # except for output
         W.append([])
         b.append( random.uniform(0, 1) )
@@ -49,11 +50,6 @@ def train(X, Y, learning_rate, hidden_units, output_units, max_iterations):
                 W[l][i].append( random.uniform(0, 1) ) # sets a random weight W[l][i][j] from unit i in layer l to unit j in layer l+1
 
     b.append( random.uniform(0, 1) ) # bias for output layer
-
-    # for i in range(len(W)):
-    #     print i
-    #     for j in range(len(W[i])):
-    #         print W[i][j]
 
     for it in range(max_iterations):
         for k in range(len(X)):
@@ -73,14 +69,13 @@ def train(X, Y, learning_rate, hidden_units, output_units, max_iterations):
                     a[l].append( sigmoid(sm) )
                     z[l].append( sm )
 
-            # Backpropagation
-
+            # Backward step
             delta = [[0 for j in range(units[i])] for i in range(layers)]
 
-            for i in range(output_units):
+            for i in range(output_units): # Computes delta only for the output layer
                 delta[layers-1][i] = - ( opt[i] - a[layers-1][i] ) * deriv( z[layers-1][i] )
 
-            for l in range(layers-2, 0, -1):
+            for l in range(layers-2, 0, -1): # Backpropagates the error
                 for i in range( units[l] ):
                     sm = 0
                     for j in range( units[l+1] ) :
@@ -90,6 +85,7 @@ def train(X, Y, learning_rate, hidden_units, output_units, max_iterations):
             for l in range(layers-1):
                 for i in range(units[l]):
                     for j in range(units[l+1]):
+                        # Gradient Descent
                         W[l][i][j] -= learning_rate * a[l][i] * delta[l+1][j]
                         b[l] -= learning_rate * delta[l+1][j]
 
@@ -106,9 +102,8 @@ def classify(X, W, b, hidden_units, output_units):
             - hidden_units: a list containing the number of units per hidden layer;
             - output_units : number of output units on the Multi-layer Perceptron.
     """
-
     dim = len(X[0])
-    layers = 1 + len(hidden_units) + 1 # input + hidden + output
+    layers = 1 + len(hidden_units) + 1
     units = [dim] + hidden_units + [output_units]
 
     for k in range(len(X)):
