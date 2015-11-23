@@ -4,18 +4,16 @@
 # - https://web.stanford.edu/class/cs294a/sparseAutoencoder.pdf
 # - http://www.ra.cs.uni-tuebingen.de/SNNS/UserManual/node146.html
 
+from numbers import Number
+
 import random
-from math import tanh
+from math import tanh, isnan, isinf
 
-random.seed(42)
-
-def sigmoid(x):
-    """ Sigmoid function. """
-    return 1.0 / (1.0 + exp(-x))
+random.seed(182)
 
 def mse(h, y):
     """
-        Mean Squared Error.
+        Mean Squared Error.da
 
         Parameters:
             - h : the output given by the network;
@@ -48,7 +46,7 @@ def netMSE(X, Y, W, b, hidden_units, output_units):
 
     return sm
 
-def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_iterations=200, threshold=0.05):
+def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_iterations=200, max_fail=5, threshold=0.05, debug=False):
     """
         Uses Backpropagation Gradient Descent to train a Multi-layer Perceptron.
 
@@ -61,6 +59,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
             - hidden_units : a list containing the number of units per hidden layer;
             - output_units : number of output units (must be equal to the dimension of the elements on Y);
             - max_iterations : maximum number of iterations of the training algorithm;
+            - max_fail : maximum number of consecutive increaces on the MSE;
             - threshold : MSE limit.
     """
     dim = len(X[0]) # inputs dimension
@@ -72,7 +71,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
     b = [] # Bias matrix
 
     M = [] # Momentum
-    alpha = 0.001 # Momentum influence
+    alpha = 0.75 # Momentum influence
 
     # Initializes W and b with random values
     for l in range( layers-1 ): # except for output
@@ -83,11 +82,19 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
             W[l].append([])
             M[l].append([])
             for j in range( units[l+1] ) :
-                b[l].append( random.uniform(0, 0.2) ) # sets random biases
-                W[l][i].append( random.uniform(0, 0.2) ) # sets a random weight W[l][i][j] from unit i in layer l to unit j in layer l+1
+                b[l].append( random.uniform(0, 1) ) # sets random biases
+                W[l][i].append( random.uniform(0, 1) ) # sets a random weight W[l][i][j] from unit i in layer l to unit j in layer l+1
                 M[l][i].append( 0 ) # the momentum term has no influence on the first iteration
 
+    # Stop creteria
+    num_fails = 0
+    trainError = None
+
+    previousValidationError = None
+    validationError = None
+
     for it in range(max_iterations):
+        # print W
         for k in range(len(X)):
             ipt = X[k]
             opt = Y[k]
@@ -102,7 +109,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
                     sm = -b[l-1][j]
                     for i in range(units[l-1]):
                         sm += a[l-1][i]*W[l-1][i][j]
-                    out = sm if l == layers-1 else tanh(sm) # the output layer is linear
+                    out = tanh(sm)
                     a[l].append( out )
                     z[l].append( sm )
 
@@ -127,18 +134,32 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
                         M[l][i][j] = learning_rate * a[l][i] * delta[l+1][j]
                         b[l][j] += learning_rate * delta[l+1][j]
 
-        error = netMSE(testX, testY, W, b, hidden_units, output_units)
+        validationError = netMSE(testX, testY, W, b, hidden_units, output_units)
+        trainError = netMSE(X, Y, W, b, hidden_units, output_units)
 
-        if it%100 == 0:
+        if it%100 == 0 and debug:
             print "Step #%d" % (it+1)
-            print "Error %f" % (error*100)
+            print "Error %f" % (validationError*100)
 
-        if error < threshold:
+        # Stop criteria
+        if previousValidationError == None:
+            previousValidationError = validationError
+        elif validationError > previousValidationError:
+            num_fails += 1
+            previousValidationError = validationError
+        else :
+            previousValidationError = None
+            num_fails = 0
+
+        if (trainError < threshold) or (num_fails == max_fail):
+            if debug:
+                print "Step #%d" % (it+1)
+                print "Error %f" % (validationError*100)
             break
 
-    return (W, b)
+    return (W, b, trainError, validationError)
 
-def fit(X, W, b, hidden_units, output_units):
+def fit(X, W, b, hidden_units, output_units, normalize_output=False):
     """
         Given the Weights matrix and the bias representing a Multi-layer Perceptron, classifies the data present on X.
 
@@ -163,9 +184,12 @@ def fit(X, W, b, hidden_units, output_units):
                 sm = -b[l-1][j]
                 for i in range(units[l-1]):
                     sm += a[l-1][i]*W[l-1][i][j]
-                out = sm if l == layers-1 else tanh( sm )
+                out = tanh( sm )
                 a[l].append( out )
         o.append(a[layers-1])
+
+    if normalize_output == False:
+        return o
 
     pred = []
     for i in range(len(X)):
@@ -180,128 +204,3 @@ def fit(X, W, b, hidden_units, output_units):
         pred.append(class_bits)
 
     return pred
-
-def normalize(X, Y, num_classes=0):
-    """ Pre-processes the data that will be used to train the network creating bit lists for the classes. """
-    for i in range(len(X)):
-        c = [0 for k in range(num_classes)]
-        c[Y[i][0]] = 1
-        Y[i] = c
-
-    return (X, Y)
-
-def getClass(class_bits):
-    """ Returns the class that corresponds to the bit list. """
-    for c in range(len(class_bits)):
-        if class_bits[c] == 1:
-            return c
-
-def readData(filename):
-    """ Reads a dataset from `filename` and returns it as a matrix. """
-    f = open(filename, 'r')
-    lines = f.readlines()
-    # Pre-proccesses the data by removing the semicolons
-    mp = lambda l : l.split(',')
-    data = map(mp, lines)
-    getX = lambda l : l[:len(l)-1]
-    X = map(getX, data)
-    getY = lambda l : l[-1][:-1] # Gets the last element (the class parameter)
-    Y = map(getY, data)
-    return (X, Y)
-
-def proccessData(filename):
-    """ Maps the input data to the model defined at the documentation and divides it into the experiments sets (train, validation and test). """
-    # Dataset info:
-    #
-    # Total: 958 data points
-    # 2 classes (positive, negative)
-    #
-    # - positive: 626
-    # - negative: 332
-    #
-    # Experiments division:
-    #
-    # - positive:
-    #     => Train: 313
-    #     => Val: 157
-    #     => Test: 155
-    #
-    # - negative:
-    #     => Train: 166
-    #     => Val: 83
-    #     => Test: 83
-    (X, Y) = readData(filename)
-
-    mp = lambda x : 1 if x == 'x' else 0 if x == 'o' else -1
-    proccessX = lambda l : map(mp, l)
-    X = map(proccessX, X)
-
-    proccessY = lambda y : [1] if y == 'positive' else [0]
-    Y = map(proccessY, Y)
-
-    (X, Y) = normalize(X, Y, num_classes=2) # processes Y to classes bit list
-
-    C = [[], []]
-    for i in range(len(Y)):
-        if Y[i] == [1, 0]:
-            C[0].append(i)
-        else:
-            C[1].append(i)
-
-    random.shuffle(C[0])
-    random.shuffle(C[1])
-
-    negative = {'train':C[0][:166], 'validation':C[0][166:249], 'test':C[0][249:]}
-    positive = {'train':C[1][:313], 'validation':C[1][313:470], 'test':C[1][470:]}
-
-    trainData = negative['train']+positive['train']
-    validationData = negative['validation']+positive['validation']
-    testData = negative['test']+positive['test']
-
-    random.shuffle(trainData)
-    random.shuffle(validationData)
-    random.shuffle(testData)
-
-    dataset = {'train':([],[]), 'validation':([],[]), 'test':([],[])}
-
-    for i in range(len(trainData)):
-        pos = trainData[i]
-        dataset['train'][0].append(X[pos])
-        dataset['train'][1].append(Y[pos])
-
-    for i in range(len(validationData)):
-        pos = validationData[i]
-        dataset['validation'][0].append(X[pos])
-        dataset['validation'][1].append(Y[pos])
-
-    for i in range(len(testData)):
-        pos = testData[i]
-        dataset['test'][0].append(X[pos])
-        dataset['test'][1].append(Y[pos])
-
-    return dataset
-
-def loadData():
-    """ Reads and pre-processes the dataset. """
-    return proccessData('tic-tac-toe.data.txt')
-
-if __name__ == "__main__":
-    # (dataX, dataY) = loadData()
-    #
-    # trainX = dataX[:500]
-    # trainY = dataY[:500]
-    #
-    # testX = dataX[501:]
-    # testY = dataY[501:]
-    #
-    # hidden_units = [4, 15, 4]
-    # learning_rate = 0.1
-    #
-    # (W, b) = train(trainX, trainY, testX, testY, learning_rate, hidden_units, 2, 500)
-
-    # P = fit(trainX, W, b, hidden_units, 2, False)
-    #
-    # for i in range(len(P)):
-    #     print "Input: "+str(testX[i])
-    #     print "Predict "+str(P[i])
-    #     print "Expected "+str(testY[i])
