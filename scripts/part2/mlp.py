@@ -4,26 +4,6 @@
 # - https://web.stanford.edu/class/cs294a/sparseAutoencoder.pdf
 # - http://www.ra.cs.uni-tuebingen.de/SNNS/UserManual/node146.html
 
-# Dataset info:
-#
-# Total: 958 data points
-# 2 classes (positive, negative)
-#
-# - positive: 626
-# - negative: 332
-#
-# Experiments division:
-#
-# - positive:
-#     => Train: 313
-#     => Val: 157
-#     => Test: 155
-#
-# - negative:
-#     => Train: 166
-#     => Val: 83
-#     => Test: 83
-
 import random
 from math import tanh
 
@@ -56,7 +36,6 @@ def netMSE(X, Y, W, b, hidden_units, output_units):
             - hidden_units : a list containing the number of units per hidden layer;
             - output_units : number of output units (must be equal to the dimension of the elements on Y).
     """
-
     dim = len(X[0]) # inputs dimension
 
     layers = 1 + len(hidden_units) + 1 # input layer + hidden layer + output layer
@@ -84,7 +63,6 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
             - max_iterations : maximum number of iterations of the training algorithm;
             - threshold : MSE limit.
     """
-
     dim = len(X[0]) # inputs dimension
 
     layers = 1 + len(hidden_units) + 1 # input layer + hidden layer + output layer
@@ -138,7 +116,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
                 for i in range( units[l] ):
                     sm = 0
                     for j in range( units[l+1] ) :
-                            sm += W[l][i][j]*delta[l+1][j]
+                        sm += W[l][i][j]*delta[l+1][j]
                     delta[l][i] = sm * a[l][i] * (1 - a[l][i])
 
             for l in range(layers-1):
@@ -171,7 +149,6 @@ def fit(X, W, b, hidden_units, output_units):
             - hidden_units: a list containing the number of units per hidden layer;
             - output_units : number of output units on the Multi-layer Perceptron.
     """
-
     dim = len(X[0])
     layers = 1 + len(hidden_units) + 1
     units = [dim] + hidden_units + [output_units]
@@ -205,10 +182,7 @@ def fit(X, W, b, hidden_units, output_units):
     return pred
 
 def normalize(X, Y, num_classes=0):
-    """
-        Pre-processes the data that will be used to train the network.
-    """
-
+    """ Pre-processes the data that will be used to train the network creating bit lists for the classes. """
     for i in range(len(X)):
         c = [0 for k in range(num_classes)]
         c[Y[i][0]] = 1
@@ -217,6 +191,7 @@ def normalize(X, Y, num_classes=0):
     return (X, Y)
 
 def getClass(class_bits):
+    """ Returns the class that corresponds to the bit list. """
     for c in range(len(class_bits)):
         if class_bits[c] == 1:
             return c
@@ -235,14 +210,76 @@ def readData(filename):
     return (X, Y)
 
 def proccessData(filename):
-    """ Maps the input data to the model defined at the documentation. """
+    """ Maps the input data to the model defined at the documentation and divides it into the experiments sets (train, validation and test). """
+    # Dataset info:
+    #
+    # Total: 958 data points
+    # 2 classes (positive, negative)
+    #
+    # - positive: 626
+    # - negative: 332
+    #
+    # Experiments division:
+    #
+    # - positive:
+    #     => Train: 313
+    #     => Val: 157
+    #     => Test: 155
+    #
+    # - negative:
+    #     => Train: 166
+    #     => Val: 83
+    #     => Test: 83
     (X, Y) = readData(filename)
+
     mp = lambda x : 1 if x == 'x' else 0 if x == 'o' else -1
     proccessX = lambda l : map(mp, l)
     X = map(proccessX, X)
+
     proccessY = lambda y : [1] if y == 'positive' else [0]
     Y = map(proccessY, Y)
-    return normalize(X, Y, num_classes=2)
+
+    (X, Y) = normalize(X, Y, num_classes=2) # processes Y to classes bit list
+
+    C = [[], []]
+    for i in range(len(Y)):
+        if Y[i] == [1, 0]:
+            C[0].append(i)
+        else:
+            C[1].append(i)
+
+    random.shuffle(C[0])
+    random.shuffle(C[1])
+
+    negative = {'train':C[0][:166], 'validation':C[0][166:249], 'test':C[0][249:]}
+    positive = {'train':C[1][:313], 'validation':C[1][313:470], 'test':C[1][470:]}
+
+    trainData = negative['train']+positive['train']
+    validationData = negative['validation']+positive['validation']
+    testData = negative['test']+positive['test']
+
+    random.shuffle(trainData)
+    random.shuffle(validationData)
+    random.shuffle(testData)
+
+    dataset = {'train':([],[]), 'validation':([],[]), 'test':([],[])}
+
+    for i in range(len(trainData)):
+        pos = trainData[i]
+        dataset['train'][0].append(X[pos])
+        dataset['train'][1].append(Y[pos])
+
+    for i in range(len(validationData)):
+        pos = validationData[i]
+        dataset['validation'][0].append(X[pos])
+        dataset['validation'][1].append(Y[pos])
+
+    for i in range(len(testData)):
+        pos = testData[i]
+        dataset['test'][0].append(X[pos])
+        dataset['test'][1].append(Y[pos])
+
+    return dataset
 
 def loadData():
     """ Reads and pre-processes the dataset. """
