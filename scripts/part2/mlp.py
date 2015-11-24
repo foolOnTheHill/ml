@@ -124,7 +124,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
                     sm = 0
                     for j in range( units[l+1] ) :
                         sm += W[l][i][j]*delta[l+1][j]
-                    delta[l][i] = sm * a[l][i] * (1 - a[l][i])
+                    delta[l][i] = sm * (1 - a[l][i]*a[l][i])
 
             for l in range(layers-1):
                 for i in range(units[l]):
