@@ -1,3 +1,5 @@
+import random
+
 from mlp import train, fit
 from mlp_data_proccessing import loadData
 
@@ -49,17 +51,19 @@ def run():
 
     best_test_network = min(test_errors)[3]
 
-# if __name__ == "__main__":
-#     dataset = loadData()
-#
-#     learning_rate = 0.3
-#     hidden_units = [20, 100, 20]
-#
-#     (W, b, trainError, validationError) = train(dataset['train'][0], dataset['train'][1], dataset['validation'][0], dataset['validation'][1], learning_rate, hidden_units, 2, 500, debug=True)
-#
-#     P = fit(dataset['test'][0], W, b, hidden_units, 2, True)
-#
-#     for i in range(len(P)):
-#         print "Input: "+str(dataset['test'][0][i])
-#         print "Predict "+str(P[i])
-#         print "Expected "+str(dataset['test'][1][i])
+if __name__ == "__main__":
+    dataset = loadData()
+
+    learning_rate = 0.3
+    hidden_units = [20, 30, 20]
+
+    (W, b, trainError, validationError) = train(dataset['train'][0], dataset['train'][1], dataset['validation'][0], dataset['validation'][1], learning_rate, hidden_units, 2, 500, debug=True)
+
+    P = fit(dataset['test'][0], W, b, hidden_units, 2, True)
+
+    e = 0
+    for i in range(len(P)):
+        if P[i] != dataset['test'][1][i]:
+            e += 1
+    error = float(e) / len(P)
+    print "Test error %f" % error

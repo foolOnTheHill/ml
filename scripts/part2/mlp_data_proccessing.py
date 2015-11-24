@@ -1,3 +1,6 @@
+import random
+
+random.seed(58)
 
 def normalize(X, Y, num_classes=0):
     """ Pre-processes the data that will be used to train the network creating bit lists for the classes. """

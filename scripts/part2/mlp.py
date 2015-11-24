@@ -9,8 +9,6 @@ from numbers import Number
 import random
 from math import tanh, isnan, isinf
 
-random.seed(182)
-
 def mse(h, y):
     """
         Mean Squared Error.da
@@ -71,7 +69,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
     b = [] # Bias matrix
 
     M = [] # Momentum
-    alpha = 0.75 # Momentum influence
+    alpha = 0.505 # Momentum influence
 
     # Initializes W and b with random values
     for l in range( layers-1 ): # except for output
@@ -82,8 +80,8 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
             W[l].append([])
             M[l].append([])
             for j in range( units[l+1] ) :
-                b[l].append( random.uniform(0, 1) ) # sets random biases
-                W[l][i].append( random.uniform(0, 1) ) # sets a random weight W[l][i][j] from unit i in layer l to unit j in layer l+1
+                b[l].append( random.uniform(0, 0.01) ) # sets random biases
+                W[l][i].append( random.uniform(0, 0.01) ) # sets a random weight W[l][i][j] from unit i in layer l to unit j in layer l+1
                 M[l][i].append( 0 ) # the momentum term has no influence on the first iteration
 
     # Stop creteria
@@ -139,7 +137,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
 
         if it%100 == 0 and debug:
             print "Step #%d" % (it+1)
-            print "Error %f" % (validationError*100)
+            print "Error %f" % validationError
 
         # Stop criteria
         if previousValidationError == None:
@@ -154,7 +152,7 @@ def train(X, Y, testX, testY, learning_rate, hidden_units, output_units, max_ite
         if (trainError < threshold) or (num_fails == max_fail):
             if debug:
                 print "Step #%d" % (it+1)
-                print "Error %f" % (validationError*100)
+                print "Error %f" % validationError
             break
 
     return (W, b, trainError, validationError)
