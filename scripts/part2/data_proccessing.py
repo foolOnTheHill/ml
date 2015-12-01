@@ -1,3 +1,6 @@
+import random
+
+random.seed(58)
 
 def readData(filename):
     """ Returns a matrix with the data from the file. """
@@ -22,6 +25,26 @@ def getClasses(Y):
             C[1].append(i)
     return C
 
+def divideData(X, Y):
+    """ Divides the data into 10 holdouts. """
+    H = []
+    n = len(X)
+    data = zip(X, Y)
+    random.shuffle(data)
+    X = data[0]
+    Y = data[1]
+    size = n / 10
+
+    s = 0 # Starting point
+    for i in range(10):
+        e = s + size
+        ipt = X[s:e]
+        out = Y[s:e]
+        H.append( (ipt, out) )
+        s = e
+
+    return H
+
 def proccessData(filename):
     """ Maps the input data to the model defined at the documentation. """
     (X, Y) = readData(filename)
@@ -30,5 +53,8 @@ def proccessData(filename):
     X = map(proccessX, X)
     proccessY = lambda y : 1 if y == 'positive' else 0
     Y = map(proccessY, Y)
-    C = getClasses(Y)
-    return (X, Y, C)
+    H = divideData(X, Y)
+    return H
+
+def loadData():
+    return proccessData('tic-tac-toe.txt')
