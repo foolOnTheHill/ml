@@ -85,20 +85,37 @@ def proccessData(filename):
 
     dataset = {'train':([],[]), 'validation':([],[]), 'test':([],[])}
 
+    trainFile = open('train.txt', 'w')
+    validationFile = open('validation.txt', 'w')
+    testFile = open('test.txt', 'w')
+
+    mp = lambda x : str(x)
+    jn = lambda l : ' '.join(map(mp, l))
+
     for i in range(len(trainData)):
         pos = trainData[i]
         dataset['train'][0].append(X[pos])
         dataset['train'][1].append(Y[pos])
+        trainFile.write( jn(X[pos]+Y[pos]) )
+        trainFile.write('\n')
 
     for i in range(len(validationData)):
         pos = validationData[i]
         dataset['validation'][0].append(X[pos])
         dataset['validation'][1].append(Y[pos])
+        validationFile.write( jn(X[pos]+Y[pos]) )
+        validationFile.write('\n')
 
     for i in range(len(testData)):
         pos = testData[i]
         dataset['test'][0].append(X[pos])
         dataset['test'][1].append(Y[pos])
+        testFile.write( jn(X[pos]+Y[pos]) )
+        testFile.write('\n')
+
+    trainFile.close()
+    validationFile.close()
+    testFile.close()
 
     return dataset
 
