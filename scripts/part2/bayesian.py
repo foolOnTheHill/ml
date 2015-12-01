@@ -1,4 +1,7 @@
 from operator import mul
+import error
+from data_processing import getClasses
+from fit import fit
 
 def prod(lst):
     """ Returns the product of the elements on the list. """
@@ -76,3 +79,11 @@ def estimatePosterior(trainX, trainC, testX):
             p = bayes(j, testX[i], p, q, r)
             P[i].append(p)
     return P
+
+def classify(trainX, trainY, testX, testY):
+    """ Uses the Bayesian Classifier to classify the test data. """
+    trainC = getClasses(trainY)
+    P = estimatePosterior(trainX, trainC, testX)
+    E = fit(testX, P)
+    (e_rate, se, interval) = error.confidenceInterval(testY, E)
+    return (E, e_rate, se, interval)

@@ -16,7 +16,7 @@ def getClasses(Y):
     """ Divides the data set according to elements classes. """
     C = [[], []]
     for i in range(len(Y)):
-        if Y[i] == 1:
+        if Y[i] == 0:
             C[0].append(i)
         else:
             C[1].append(i)
@@ -28,7 +28,7 @@ def proccessData(filename):
     mp = lambda x : 1 if x == 'x' else 0 if x == 'o' else -1
     proccessX = lambda l : map(mp, l)
     X = map(proccessX, X)
-    proccessY = lambda y : 1 if y == 'positive' else 2
+    proccessY = lambda y : 1 if y == 'positive' else 0
     Y = map(proccessY, Y)
     C = getClasses(Y)
     return (X, Y, C)

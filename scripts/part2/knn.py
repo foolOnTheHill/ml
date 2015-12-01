@@ -1,3 +1,6 @@
+import error
+from fit import fit
+
 def estimatePosterior(trainX, trainY, testX, k):
     """ Uses KNN to estimate P(w_j | x). """
     P = []
@@ -33,3 +36,10 @@ def estimatePosterior(trainX, trainY, testX, k):
             P[i].append(p)
 
     return P
+
+def classify(trainX, trainY, testX, testY, k):
+    """ Uses the KNN to classify the test data. """
+    P = estimatePosterior(trainX, trainY, testX, k)
+    E = fit(testX, P)
+    (e_rate, se, interval) = error.confidenceInterval(testY, E)
+    return (E, e_rate, se, interval)
