@@ -1,27 +1,26 @@
-def estimatePosterior(X, Y, W, k):
+def estimatePosterior(trainX, trainY, testX, k):
     """ Uses KNN to estimate P(w_j | x). """
     P = []
-    n = len(X)
-    c = len(W)
-    ids = range(n)
+
+    n = len(testX)
+    m = len(trainX)
+    c = 2 # Number of classes
+    ids = range(m)
 
     delta = lambda (x_ik, x_jk) : 0 if (x_ik == x_jk) else 1
     d = lambda x_i, x_j : sum(map(delta, zip(x_i, x_j))) # Dissimmilarity function
 
-    for j in range(c):
+    ND = [[0 for j in range(m)] for i in range(n)] # Matrix filled with 0s
+
+    for i in range(n):
+        for j in range(m):
+            ND[i][j] = d(testX[i], trainX[j])
+
+    for i in range(n):
         P.append([])
 
-    ND = [[0 for j in range(n)] for i in range(n)] # Matrix filled with 0s
-
-    for i in range(n):
-        for j in range(i+1, n):
-            ND[i][j] = d(X[i], X[j])
-            ND[j][i] = ND[i][j]
-
-    for i in range(n):
-        ft = lambda (k, x) : not (k == i) # Drops the element with index eq. to i
-        N = filter(ft, zip(ids, ND[i])) # Neighbors
-        N.sort(lambda (l, a), (m, b) : -1 if (a < b) else 1 if (a > b) else 0)
+        N = zip(ids, ND[i]) # Neighbors
+        N.sort(lambda (l, a), (m, b) : -1 if (a < b) else 1 if (a > b) else 0) # Sorts by distance
         N = N[:k] # K Nearest Neighbors
 
         freq = [0 for i in range(c)]
@@ -31,6 +30,6 @@ def estimatePosterior(X, Y, W, k):
 
         for j in range(c):
             p = freq[j] / float(k)
-            P[j].append(p)
+            P[i].append(p)
 
     return P

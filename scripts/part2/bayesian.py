@@ -64,19 +64,15 @@ def bayes(j, x, p, q, r):
     bt = num / denom
     return bt
 
-def bayesianClassifier(X, C):
-    """ Classifies the data using the estimated probabilities and Bayes Theorem. """
-    E = [] # Classification computed by the algorithm
-    (p, q, r) = estimateProbabilities(X, C)
-    n = len(X)
+def estimatePosterior(trainX, trainC, testX):
+    """ Uses Maximum Likelihood and Bayes Theorem to estimate P(w_j | x). """
+    P = [] # Classification computed by the algorithm
+    (p, q, r) = estimateProbabilities(trainX, trainC)
+    n = len(testX)
     c = 2 # Number of classes
     for i in range(n):
-        y = None
-        est = None
+        P.append([])
         for j in range(c):
-            tmp = bayes(j, X[i], p, q, r)
-            if (est == None) or (tmp > est):
-                est = tmp
-                y = j+1
-        E.append(y)
-    return E
+            p = bayes(j, testX[i], p, q, r)
+            P[i].append(p)
+    return P
