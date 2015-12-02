@@ -52,7 +52,7 @@ def run():
             resultsKn.write("- KNN (n = %d)\n" % k)
             writeResults(resultsKn, e_rate_kn, se_kn, interval_kn)
             #
-            resultsSum.write("- Sum\n")
+            resultsSum.write("- Sum (n = %d)\n" % k)
             writeResults(resultsSum, e_rate_sum, se_sum, interval_sum)
 
     resultsBay.close()
