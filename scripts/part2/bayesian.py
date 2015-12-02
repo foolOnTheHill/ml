@@ -1,6 +1,6 @@
 from operator import mul
 import error
-from data_processing import getClasses
+from data_proccessing import getClasses
 from fit import fit
 
 def prod(lst):
@@ -27,14 +27,14 @@ def estimateProbabilities(X, C):
             nj = len(C[j])
             for k in elements:
                 # p_i_j
-                r = X[k][i]*(X[k][i] + 1)*0.5
-                p_tmp.append(r)
+                res = X[k][i]*(X[k][i] + 1)*0.5
+                p_tmp.append(res)
                 # q_i_j
-                r = 1 - X[k][i]*X[k][i]
-                q_tmp.append(r)
+                res = 1 - X[k][i]*X[k][i]
+                q_tmp.append(res)
                 # r_i_j
-                r = X[k][i]*(X[k][i] - 1)*0.5
-                r_tmp.append(r)
+                res = X[k][i]*(X[k][i] - 1)*0.5
+                r_tmp.append(res)
             p_i.append(sum(p_tmp) / float(nj))
             q_i.append(sum(q_tmp) / float(nj))
             r_i.append(sum(r_tmp) / float(nj))
@@ -48,10 +48,10 @@ def conditional(x, j, p, q, r):
     tmp = []
     d = 9
     for i in range(d):
-        r = p[i][j] ** (x[i] * (x[i] + 1) * 0.5)
-        r *= q[i][j] ** (1 - x[i]*x[i])
-        r *= r[i][j] ** (x[i] * (x[i] - 1) * 0.5)
-        tmp.append(r)
+        res = p[i][j] ** (x[i] * (x[i] + 1) * 0.5)
+        res *= q[i][j] ** (1 - x[i]*x[i])
+        res *= r[i][j] ** (x[i] * (x[i] - 1) * 0.5)
+        tmp.append(res)
     return prod(tmp)
 
 def bayes(j, x, p, q, r):
@@ -60,8 +60,8 @@ def bayes(j, x, p, q, r):
     P = [0.653, 0.347]
     c = 2
     for k in range(c):
-        r = conditional(x, k, p, q, r) * P[k]
-        tmp.append(r)
+        res = conditional(x, k, p, q, r) * P[k]
+        tmp.append(res)
     num = conditional(x, j, p, q, r) * P[j] * 1.0
     denom = sum(tmp)
     bt = num / denom
@@ -76,8 +76,8 @@ def estimatePosterior(trainX, trainC, testX):
     for i in range(n):
         P.append([])
         for j in range(c):
-            p = bayes(j, testX[i], p, q, r)
-            P[i].append(p)
+            res = bayes(j, testX[i], p, q, r)
+            P[i].append(res)
     return P
 
 def classify(trainX, trainY, testX, testY):

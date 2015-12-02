@@ -1,4 +1,4 @@
-import data_processing
+import data_proccessing
 import bayesian
 import knn
 import sum_rule
@@ -27,7 +27,7 @@ def writeResults(f, e_rate, se, interval):
     f.write("(c) Confidence Interval: [%f, %f]\n\n" % (interval[0], interval[1]))
 
 def run():
-    H = data_processing.loadData() # Holdouts
+    H = data_proccessing.loadData() # Holdouts
     K = [30, 20, 10, 5, 1]
 
     resultsBay = open('part2-results-bayesian.txt', 'w')

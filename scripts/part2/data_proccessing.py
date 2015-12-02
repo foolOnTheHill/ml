@@ -31,8 +31,13 @@ def divideData(X, Y):
     n = len(X)
     data = zip(X, Y)
     random.shuffle(data)
-    X = data[0]
-    Y = data[1]
+
+    mp0 = lambda p : p[0]
+    mp1 = lambda p : p[1]
+
+    X = map(mp0, data)
+    Y = map(mp1, data)
+
     size = n / 10
 
     holdFile = open('holdouts.txt', 'w')
@@ -49,7 +54,7 @@ def divideData(X, Y):
 
         holdFile.write("\nHoldout #%d\n" % (i+1))
         for j in range(len(ipt)):
-            holdFile.write( jn(ipt[j]+out[j]) )
+            holdFile.write( jn(ipt[j]+[ out[j] ]) )
             holdFile.write('\n')
 
         s = e
