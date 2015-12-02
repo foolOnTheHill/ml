@@ -6,9 +6,11 @@ def readData(filename):
     # Pre-proccesses the data by removing the semicolons
     mp = lambda l : l.split(',')
     data = map(mp, lines)
+    getPart = lambda l : 1 if l[-1][:-1] == 'positive' else 0
+    part = map(getPart, data)
     drp = lambda l : l[:len(l)-1]
     data = map(drp, data) # Removes the last element of every line (the class parameter)
-    return data
+    return (data, part)
 
 def computeDissimilarityMatrix(data):
     """ Computes the Dissimilarity Matrix. The data should be pre-proccessed. """
@@ -29,5 +31,5 @@ def computeDissimilarityMatrix(data):
     return matrix
 
 def proccessData(filename):
-    data = readData(filename)
-    return computeDissimilarityMatrix(data)
+    (data, part) = readData(filename)
+    return (data, part, computeDissimilarityMatrix(data))

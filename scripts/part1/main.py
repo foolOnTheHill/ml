@@ -38,14 +38,31 @@ def computeHardPartition(U):
                 u_max = U[i][j]
         H.append(k)
 
-def computeRandIndex(E, U, G):
+def computeRandIndex(E, H, Y):
     """ Computes the Adjusted Rand Index. """
-    pass
+    m = len(E)
+    a = 0
+    b = 0
+    c = 0
+    d = 0
+    for i in range(m):
+        for j in range(i, m):
+            sameY = Y[i] == Y[j]
+            sameH = H[i] == H][j]
+            if sameY and sameH:
+                a += 1
+            elif (not sameY) and (not sameH):
+                b += 1
+            elif sameY and (not sameH):
+                c += 1
+            else:
+                d += 1
+    R = (a + b) / float(a + b + c + d)
+    return R
 
 if __name__ == "__main__":
     FILENAME = 'tic-tac-toe.data.txt'
-    E = data_processing.readData(FILENAME) # Elements from the data set
-    D = data_processing.computeDissimilarityMatrix(E) # Dissimilarity matrix
+    (E, D, Y) = data_processing.proccessData(FILENAME) # Elements from the data set
     K = 2
     T = 150
     m = 2
@@ -53,7 +70,7 @@ if __name__ == "__main__":
     epsilon = 10 ** -10
     (U, G, J) = run(E, D, K, T, m, q, epsilon)
     H = computeHardPartition(U)
-    computeRandIndex(E, U, G)
+    computeRandIndex(E, H, Y)
     writeMatrix(U, 'fuzzy_partition')
     writeMatrix(G, 'medoids')
     writeMatrix(H, 'hard_partition')
