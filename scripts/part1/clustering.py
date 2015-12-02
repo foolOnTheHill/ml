@@ -59,7 +59,7 @@ def _updateMembershipDegree(D, G, K, n, m):
         U.append(U_i)
     return U
 
-def _goalFunction(D, G, U, K, n):
+def _goalFunction(D, G, U, K, n, m):
     """ Computes the goal function based on the new membership degree matrix and the new prototypes. """
     J = 0
     for k in range(K):
@@ -82,7 +82,7 @@ def fuzzyClustering(E, D, K, T, m, q, epsilon):
     n = len(E)
     G = _selectRandomPrototypes(K, n, q) # Initial prototypes
     U = _updateMembershipDegree(D, G, K, n, m) # Membership degree Matrix
-    J = _goalFunction(D, G, U, K, n) # Homogeneity / Goal function
+    J = _goalFunction(D, G, U, K, n, m) # Homogeneity / Goal function
     t = 0 # Current Iteration step
 
     while t < T:
@@ -93,7 +93,7 @@ def fuzzyClustering(E, D, K, T, m, q, epsilon):
         # Step 2
         U = _updateMembershipDegree(D, G, K, n, m)
         # Step 3
-        g = _goalFunction(D, G, U, K, n)
+        g = _goalFunction(D, G, U, K, n, m)
         if abs(J - g) < epsilon :
             break
         else :

@@ -6,6 +6,7 @@ def run(E, D, K, T, m, q, epsilon):
     """ Runs the fuzzy clustering 100 times and selects the best solution based on the heterogeneity parameter. """
     optimal = None
     for t in range(100):
+        print "Round #%d" % (t+1)
         current = fuzzyClustering(E, D, K, T, m, q, epsilon)
         if (optimal == None) or (optimal[2] > current[2]):
             optimal = current
@@ -48,7 +49,7 @@ def computeRandIndex(E, H, Y):
     for i in range(m):
         for j in range(i, m):
             sameY = Y[i] == Y[j]
-            sameH = H[i] == H][j]
+            sameH = H[i] == H[j]
             if sameY and sameH:
                 a += 1
             elif (not sameY) and (not sameH):
@@ -62,7 +63,7 @@ def computeRandIndex(E, H, Y):
 
 if __name__ == "__main__":
     FILENAME = 'tic-tac-toe.data.txt'
-    (E, D, Y) = data_processing.proccessData(FILENAME) # Elements from the data set
+    (E, Y, D) = data_processing.proccessData(FILENAME) # Elements from the data set
     K = 2
     T = 150
     m = 2
