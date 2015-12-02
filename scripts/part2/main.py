@@ -3,6 +3,7 @@ import bayesian
 import knn
 import sum_rule
 from math import sqrt
+from tests import compare
 
 def prepareSets(H, testIndex):
     trainX = []
@@ -27,7 +28,13 @@ def writeResults(f, e_rate, se, interval):
     f.write("(c) Confidence Interval: [%f, %f]\n\n" % (interval[0], interval[1]))
 
 def run():
-    H = data_proccessing.loadData() # Holdouts
+    classificadores = ["Bayesian", "KNN 1", "KNN 5", "KNN 10", "KNN 20", "KNN 30", "Sum 1", "Sum 5", "Sum 10", "Sum 20", "Sum 30"]
+    errorResults = {}
+    
+    for c in classificadores:
+        errorResults[c] = []
+        
+    H = data_proccessing.loadData() # Folds
     K = [30, 20, 10, 5, 1]
 
     resultsBay = open('part2-results-bayesian.txt', 'w')
@@ -44,6 +51,7 @@ def run():
 
         resultsBay.write("- Bayesian\n")
         writeResults(resultsBay, e_rate_bay, se_bay, interval_bay)
+        errorResults["Bayesian"].append(e_rate_bay)
 
         for k in K:
             (P_kn, E_kn, e_rate_kn, se_kn, interval_kn) = knn.classify(trainX, trainY, testX, testY, k)
@@ -51,13 +59,17 @@ def run():
             #
             resultsKn.write("- KNN (n = %d)\n" % k)
             writeResults(resultsKn, e_rate_kn, se_kn, interval_kn)
+            errorResults["KNN %i" % k].append(e_rate_kn)
             #
             resultsSum.write("- Sum (n = %d)\n" % k)
             writeResults(resultsSum, e_rate_sum, se_sum, interval_sum)
+            errorResults["Sum %i" % k].append(e_rate_sum)
 
     resultsBay.close()
     resultsKn.close()
     resultsSum.close()
+    
+    compare(errorResults)
 
 if __name__ == '__main__':
     run()
