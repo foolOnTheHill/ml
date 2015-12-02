@@ -70,4 +70,4 @@ def proccessData(filename):
     return H
 
 def loadData():
-    return proccessData('tic-tac-toe.txt')
+    return proccessData('tic-tac-toe.data.txt')
