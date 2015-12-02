@@ -44,9 +44,9 @@ def run():
         H = data_proccessing.loadData() # Folds
 
         for i in range(10):
-            resultsBay.write("Round %d\n\n" % (i+1))
-            resultsKn.write("Round %d\n\n" % (i+1))
-            resultsSum.write("Round %d\n\n" % (i+1))
+            resultsBay.write("Round %d\n\n" % (j*10+i+1))
+            resultsKn.write("Round %d\n\n" % (j*10+i+1))
+            resultsSum.write("Round %d\n\n" % (j*10+i+1))
     
             (trainX, trainY, testX, testY) = prepareSets(H, i)
             (P_bay, E_bay, e_rate_bay, se_bay, interval_bay) = bayesian.classify(trainX, trainY, testX, testY)
