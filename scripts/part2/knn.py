@@ -29,7 +29,7 @@ def estimatePosterior(trainX, trainY, testX, k):
         freq = [0 for k in range(c)]
         for nb in N:
             n = nb[0]
-            freq[Y[n]] += 1
+            freq[trainY[n]] += 1
 
         for j in range(c):
             p = freq[j] / float(k)
