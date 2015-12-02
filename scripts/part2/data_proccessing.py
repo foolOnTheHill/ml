@@ -35,13 +35,26 @@ def divideData(X, Y):
     Y = data[1]
     size = n / 10
 
+    holdFile = open('holdouts.txt', 'w')
+
+    mp = lambda x : str(x)
+    jn = lambda l : ' '.join(map(mp, l))
+
     s = 0 # Starting point
     for i in range(10):
         e = s + size
         ipt = X[s:e]
         out = Y[s:e]
         H.append( (ipt, out) )
+
+        holdFile.write("\nHoldout #%d\n" % (i+1))
+        for j in range(len(ipt)):
+            holdFile.write( jn(ipt[j]+out[j]) )
+            holdFile.write('\n')
+
         s = e
+
+    holdFile.close()
 
     return H
 

@@ -86,4 +86,4 @@ def classify(trainX, trainY, testX, testY):
     P = estimatePosterior(trainX, trainC, testX)
     E = fit(testX, P)
     (e_rate, se, interval) = error.confidenceInterval(testY, E)
-    return (E, e_rate, se, interval)
+    return (P, E, e_rate, se, interval)
