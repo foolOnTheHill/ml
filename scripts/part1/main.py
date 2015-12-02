@@ -70,7 +70,8 @@ if __name__ == "__main__":
     epsilon = 10 ** -10
     (U, G, J) = run(E, D, K, T, m, q, epsilon)
     H = computeHardPartition(U)
-    computeRandIndex(E, H, Y)
+    R = computeRandIndex(E, H, Y)
+    print "Rand index: %f" % R
     writeMatrix(U, 'fuzzy_partition')
     writeMatrix(G, 'medoids')
     writeMatrix(H, 'hard_partition')
