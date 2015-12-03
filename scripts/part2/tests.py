@@ -24,7 +24,7 @@ def calculate_ranks(l):
     return newarray
 
 def friedman_test(results):
-    N = 10 #N de conjuto de dados
+    N = 100 #N de conjuto de dados
     k = 11 #N de algoritmos
     
     ranks = {}
@@ -82,7 +82,7 @@ def friedman_test(results):
       
     Ff = ((N - 1) * Xf) / ((N * (k - 1)) - Xf)
     
-    valorCritico = 1.67
+    valorCritico = 1.85
     
     testFile.write("Friedman Test \n\n")
     testFile.write("Xf = " + str(Xf) + "\n")
@@ -101,7 +101,7 @@ def friedman_test(results):
     
 
 def nemenyi_test(R):
-    N = 10 #N de conjuto de dados
+    N = 100 #N de conjuto de dados
     k = 11 #N de algoritmos
     
     #Pos teste
@@ -117,12 +117,17 @@ def nemenyi_test(R):
       
     #Comparacao entre os algoritmos = Comparacao da diferenca dos ranks e a diferenca critica
     
+    count = 0
     for i in R:
-        testFile.write("\n")
         for j in R:
             if (j != i):
                 if R[i] - R[j] > CD:
+                    count += 1
                     testFile.write("%s e significativamente pior que %s.  (Rank %s = %s e Rank %s = %s)\n" %(i, j, i, str(R[i]), j, str(R[j])) )
+        if count == 0:
+            testFile.write("\n")
+        
+                    
                     
     
     testFile.close()
