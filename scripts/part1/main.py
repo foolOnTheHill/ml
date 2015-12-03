@@ -6,7 +6,7 @@ def run(E, D, K, T, m, q, epsilon):
     """ Runs the fuzzy clustering 100 times and selects the best solution based on the heterogeneity parameter. """
     optimal = None
     for t in range(100):
-        print "Round #%d" % (t+1)
+        # print "Round #%d" % (t+1)
         current = fuzzyClustering(E, D, K, T, m, q, epsilon)
         if (optimal == None) or (optimal[2] > current[2]):
             optimal = current
