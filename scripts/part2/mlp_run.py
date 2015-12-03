@@ -7,8 +7,8 @@ def run():
     # Network configuration
     num_outputs = 2
     learning_rate = [0.3, 0.5, 0.7]
-    hidden_neurons = [30, 50, 100]
-    epochs = [150, 2000, 5000]
+    hidden_neurons = [30, 50, 60]
+    epochs = [150, 500, 2000]
 
     # Tic-tac-toe dataset
     dataset = loadData()
@@ -21,7 +21,8 @@ def run():
     for i in range(len(learning_rate)):
         for j in range(len(epochs)):
             for k in range(len(hidden_neurons)):
-                hidden_units = [20, hidden_neurons[k], 20]
+                print index
+                hidden_units = [hidden_neurons[k]]
                 (W, b, trainError, validationError) = train(dataset['train'][0], dataset['train'][1], dataset['validation'][0], dataset['validation'][1], learning_rate[i], hidden_units, num_outputs, epochs[j])
                 networks.append( (learning_rate[i], epochs[j], hidden_units, num_outputs) )
                 errors.append( (validationError, trainError, index) )
@@ -42,7 +43,7 @@ def run():
 
     bestNetworkResults.write('Learning rate: %f\n' % best_lr)
     bestNetworkResults.write('Epochs: %d\n' % best_ep)
-    bestNetworkResults.write('Hidden units: %d\n\n' % best_hd[1])
+    bestNetworkResults.write('Hidden units: %d\n\n' % best_hd[0])
 
     test_set_size = len(dataset['test'][1])
 
