@@ -26,7 +26,7 @@ def estimatePosterior(trainX, trainY, testX, k):
         N.sort(lambda (l, a), (m, b) : -1 if (a < b) else 1 if (a > b) else 0) # Sorts by distance
         N = N[:k] # K Nearest Neighbors
 
-        freq = [0 for k in range(c)]
+        freq = [0 for o in range(c)]
         for nb in N:
             n = nb[0]
             freq[trainY[n]] += 1
