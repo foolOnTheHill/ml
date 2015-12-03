@@ -24,6 +24,7 @@ def writeMatrix(filename, M):
             s = str(e) + ' '
             f.write(s)
         f.write('\n')
+    f.close()
 
 def computeHardPartition(U):
     """ Given the membership degree matrix U, computes the hard partitioning. """
@@ -72,7 +73,11 @@ if __name__ == "__main__":
     (U, G, J) = run(E, D, K, T, m, q, epsilon)
     H = computeHardPartition(U)
     R = computeRandIndex(E, H, Y)
-    print "Rand index: %f" % R
+
+    f = open('rand-index.txt', 'w')
+    f.write("Rand index: %f\n" % R)
+    f.close()
+
     writeMatrix(U, 'fuzzy_partition')
     writeMatrix(G, 'medoids')
     writeMatrix(H, 'hard_partition')
