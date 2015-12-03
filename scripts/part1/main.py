@@ -39,6 +39,7 @@ def computeHardPartition(U):
                 k = j
                 u_max = U[i][j]
         H.append(k)
+    return H
 
 def computeRandIndex(E, H, Y):
     """ Computes the Adjusted Rand Index. """
