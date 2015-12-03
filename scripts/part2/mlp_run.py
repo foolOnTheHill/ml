@@ -32,8 +32,6 @@ def run():
 
     bestNetworkResults = open('best-net-results.txt', 'w')
 
-    confusionMatrix = [[0, 0], [0, 0]]
-
     best_network = networks[min(errors)[2]] # index of the network with the lowest validation error
 
     # Best parameters
@@ -51,6 +49,8 @@ def run():
     test_networks = []
     test_errors = []
     for i in range(30):
+        confusionMatrix = [[0, 0], [0, 0]]
+
         (W, b, trainError, validationError) = train(dataset['train'][0], dataset['train'][1], dataset['validation'][0], dataset['validation'][1], best_lr, best_hd, best_no, best_ep)
         T = fit(dataset['test'][0], W, b, best_hd, best_no, True)
         e = 0
@@ -62,19 +62,19 @@ def run():
 
         bestNetworkResults.write("%d %f %f %f\n" % ((i+1), trainError, validationError, e))
 
+        confFile = open('confusion-matrix-'+str(i+1)+'.txt', 'w')
+        for i in range(2):
+            s = ''
+            for j in range(2):
+                s += str(confusionMatrix[i][j]) + ' '
+            s += '\n'
+            confFile.write(s)
+        confFile.close()
+
         test_networks.append( (W, b, best_hd, best_no) )
         test_errors.append( (e, trainError, validationError, i) )
 
     bestNetworkResults.close()
-
-    confFile = open('confusion-matrix.txt', 'w')
-    for i in range(2):
-        s = ''
-        for j in range(2):
-            s += str(confusionMatrix[i][j]) + ' '
-        s += '\n'
-        confFile.write(s)
-    confFile.close()
 
     best_test_network = min(test_errors)[3]
 
