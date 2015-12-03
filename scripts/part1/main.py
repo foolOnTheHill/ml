@@ -12,7 +12,7 @@ def run(E, D, K, T, m, q, epsilon):
             optimal = current
     return optimal
 
-def writeMatrix(filename, M):
+def writeMatrix(M, filename):
     """ Prints the matrix M to a .txt file named `filename`. """
     f = open(filename+'.txt', 'w')
     f.write(filename+':\n')
