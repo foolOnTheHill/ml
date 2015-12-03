@@ -7,8 +7,8 @@ def run():
     # Network configuration
     num_outputs = 2
     learning_rate = [0.3, 0.5, 0.7]
-    epochs = [30, 50, 100]
-    hidden_neurons = [150, 2000, 5000]
+    hidden_neurons = [30, 50, 100]
+    epochs = [150, 2000, 5000]
 
     # Tic-tac-toe dataset
     dataset = loadData()
