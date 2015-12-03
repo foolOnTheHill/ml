@@ -38,7 +38,7 @@ def computeHardPartition(U):
             if U[i][j] > u_max:
                 k = j
                 u_max = U[i][j]
-        H.append(k)
+        H.append([k])
     return H
 
 def computeRandIndex(E, H, Y):
@@ -77,6 +77,7 @@ if __name__ == "__main__":
 
     f = open('rand-index.txt', 'w')
     f.write("Rand index: %f\n" % R)
+    f.write("J: %f\n" % J)
     f.close()
 
     writeMatrix(U, 'fuzzy_partition')
