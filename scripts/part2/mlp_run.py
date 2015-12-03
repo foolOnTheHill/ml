@@ -1,7 +1,7 @@
 import random
 
 from mlp import train, fit
-from mlp_data_proccessing import loadData
+from mlp_data_proccessing import loadData, getClass
 
 def run():
     # Network configuration
@@ -32,6 +32,8 @@ def run():
 
     bestNetworkResults = open('best-net-results.txt', 'w')
 
+    confusionMatrix = [[0, 0], [0, 0]]
+
     best_network = networks[min(errors)[2]] # index of the network with the lowest validation error
 
     # Best parameters
@@ -55,6 +57,7 @@ def run():
         for k in range(test_set_size):
             if dataset['test'][1][k] != T[k]:
                 e += 1
+            confusionMatrix[getClass(dataset['test'][1][k])][getClass(T[k])] += 1
         e = float(e) / test_set_size
 
         bestNetworkResults.write("%d %f %f %f\n" % ((i+1), trainError, validationError, e))
@@ -63,6 +66,15 @@ def run():
         test_errors.append( (e, trainError, validationError, i) )
 
     bestNetworkResults.close()
+
+    confFile = open('confusion-matrix.txt', 'w')
+    for i in range(2):
+        s = ''
+        for j in range(2):
+            s += str(confusionMatrix[i][j]) + ' '
+        s += '\n'
+        confFile.write(s)
+    confFile.close()
 
     best_test_network = min(test_errors)[3]
 
